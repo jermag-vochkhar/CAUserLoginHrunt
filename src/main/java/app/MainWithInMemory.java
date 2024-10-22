@@ -3,10 +3,14 @@ package app;
 import data_access.DBUserDataAccessObject;
 import data_access.InMemoryUserDataAccessObject;
 import entity.CommonUserFactory;
+import entity.User;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.logged_in.LoggedInViewModel;
+import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.signup.SignupViewModel;
+import use_case.login.LoginInputData;
+import use_case.login.LoginOutputData;
 import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
@@ -52,6 +56,14 @@ public class MainWithInMemory {
 
         // TODO Task 1.1 in a copy of this file, change this line to use the in-memory DAO.
         final InMemoryUserDataAccessObject userDataAccessObject = new InMemoryUserDataAccessObject();
+        final LoginInputData loginInputData = new LoginInputData("Blah", "Blah");
+        final LoginPresenter loginPresenter = new LoginPresenter(viewManagerModel, loggedInViewModel, loginViewModel);
+        final User user = userDataAccessObject.get(loginInputData.getUsername());
+
+        final LoginOutputData loginOutputData = new LoginOutputData(user.getName(), false);
+        loginPresenter.prepareSuccessView(loginOutputData);
+
+        userDataAccessObject.setCurrentUser(user.getName());
 
         final SignupView signupView = SignupUseCaseFactory.create(viewManagerModel, loginViewModel,
                                                                   signupViewModel, userDataAccessObject);
